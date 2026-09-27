@@ -181,7 +181,7 @@ Replace the above placeholder with your actual deployed website URL.
 ### GitHub Repository
 
 **Repository:**
-`https://github.com/YOUR-USERNAME/smart-student-performance-predictor`
+https://github.com/vaishuk2006/smart-student-performance-predictorr/tree/main
 
 Replace `YOUR-USERNAME` with your actual GitHub username.
 
