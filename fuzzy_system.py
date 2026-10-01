@@ -8,6 +8,7 @@ from skfuzzy import control as ctrl
 # Fuzzy Logic System
 # ---------------------------------------------------------
 
+
 # -----------------------------
 # INPUT VARIABLES
 # -----------------------------
@@ -52,7 +53,10 @@ performance = ctrl.Consequent(
 # MEMBERSHIP FUNCTIONS
 # =========================================================
 
+# -----------------------------
 # Attendance
+# -----------------------------
+
 attendance["low"] = fuzz.trimf(
     attendance.universe,
     [0, 0, 50]
@@ -69,7 +73,10 @@ attendance["high"] = fuzz.trimf(
 )
 
 
+# -----------------------------
 # Study Hours
+# -----------------------------
+
 study_hours["low"] = fuzz.trimf(
     study_hours.universe,
     [0, 0, 4]
@@ -86,7 +93,10 @@ study_hours["high"] = fuzz.trimf(
 )
 
 
+# -----------------------------
 # Assignment Score
+# -----------------------------
+
 assignment_score["low"] = fuzz.trimf(
     assignment_score.universe,
     [0, 0, 50]
@@ -103,7 +113,10 @@ assignment_score["high"] = fuzz.trimf(
 )
 
 
+# -----------------------------
 # Exam Score
+# -----------------------------
+
 exam_score["low"] = fuzz.trimf(
     exam_score.universe,
     [0, 0, 50]
@@ -120,7 +133,10 @@ exam_score["high"] = fuzz.trimf(
 )
 
 
+# -----------------------------
 # Participation
+# -----------------------------
+
 participation["low"] = fuzz.trimf(
     participation.universe,
     [0, 0, 40]
@@ -366,8 +382,9 @@ def predict_performance(
 
     score = system.output["performance"]
 
-    # Keep the score within 0–100
+    # Keep score within 0–100
     score = max(0, min(100, score))
+
 
     # -----------------------------
     # PERFORMANCE CATEGORY
@@ -384,6 +401,7 @@ def predict_performance(
 
     else:
         category = "Excellent"
+
 
     # -----------------------------
     # IKS / ABHYASA GUIDANCE
@@ -424,6 +442,11 @@ def predict_performance(
             "of Abhyasa emphasizes sustained practice, which can "
             "help maintain long-term learning and improvement."
         )
+
+
+    # -----------------------------
+    # RETURN RESULT
+    # -----------------------------
 
     return {
         "score": round(score, 2),
