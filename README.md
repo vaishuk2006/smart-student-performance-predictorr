@@ -240,11 +240,11 @@ The output should change according to the values entered by the user.
 
 ## Deployment
 
-### Live Demo
+[### Live Demo](https://smart-student-performance-predictor.streamlit.app/?utm_source=chatgpt.com)
 
 **Deployment Link:**
 
-Add your actual Streamlit deployment link here.
+https://smart-student-performance-predictor.streamlit.app/
 
 ### GitHub Repository
 
