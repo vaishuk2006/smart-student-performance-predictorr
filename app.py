@@ -1,6 +1,12 @@
 import streamlit as st
-from fuzzy_system import predict_performance
 
+from fuzzy_system import predict_performance
+from llm_guidance import generate_guidance
+
+
+# ============================================================
+# PAGE CONFIGURATION
+# ============================================================
 
 st.set_page_config(
     page_title="Smart Student Performance Predictor",
@@ -9,9 +15,9 @@ st.set_page_config(
 )
 
 
-# -----------------------------
+# ============================================================
 # CUSTOM CSS
-# -----------------------------
+# ============================================================
 
 st.markdown("""
 <style>
@@ -46,9 +52,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# -----------------------------
+# ============================================================
 # TITLE
-# -----------------------------
+# ============================================================
 
 st.markdown(
     '<div class="main-title">🎓 Smart Student Performance Predictor</div>',
@@ -61,9 +67,9 @@ st.markdown(
 )
 
 
-# -----------------------------
+# ============================================================
 # INPUT SECTION
-# -----------------------------
+# ============================================================
 
 st.markdown(
     '<div class="section-title">Enter Student Details</div>',
@@ -126,9 +132,9 @@ participation = st.number_input(
 )
 
 
-# -----------------------------
+# ============================================================
 # PREDICTION BUTTON
-# -----------------------------
+# ============================================================
 
 if st.button("Predict Performance"):
 
@@ -145,9 +151,9 @@ if st.button("Predict Performance"):
 
     else:
 
-        # -----------------------------
-        # GET PREDICTION
-        # -----------------------------
+        # ====================================================
+        # AI/ML FUZZY LOGIC PREDICTION
+        # ====================================================
 
         result = predict_performance(
             attendance,
@@ -157,14 +163,14 @@ if st.button("Predict Performance"):
             participation
         )
 
+        # Get prediction values FIRST
         predicted_score = result["score"]
         performance_level = result["category"]
-        guidance = result["guidance"]
 
 
-        # -----------------------------
-        # RESULT
-        # -----------------------------
+        # ====================================================
+        # DISPLAY PREDICTION
+        # ====================================================
 
         st.markdown(
             f"### 🎯 Predicted Performance: {predicted_score:.2f}%"
@@ -174,22 +180,47 @@ if st.button("Predict Performance"):
             f"### 📊 Performance Level: {performance_level}"
         )
 
-
-        # -----------------------------
-        # SUCCESS MESSAGE
-        # -----------------------------
-
         st.success("Prediction completed successfully!")
+            # Suggestions for Improvement
+    suggestions = []
 
+    if attendance < 75:
+        suggestions.append("Improve your attendance by attending classes regularly.")
 
-        # -----------------------------
-        # IKS / ABHYASA GUIDANCE
-        # -----------------------------
+    if study_hours < 2:
+        suggestions.append("Increase your daily study time to at least 2–3 hours.")
 
-        st.info(
-            f"""
-            **🪷 IKS / Abhyasa Guidance**
+    if assignment_score < 50:
+        suggestions.append("Complete assignments regularly and focus on improving your assignment scores.")
 
-            {guidance}
-            """
+    if exam_score < 50:
+        suggestions.append("Revise important topics and practice previous exam questions.")
+
+    if participation < 50:
+        suggestions.append("Participate more actively in classroom discussions and activities.")
+
+    if not suggestions:
+        suggestions.append("Great work! Maintain your current study habits and continue improving.")
+
+    st.subheader("💡 Suggestions for Improvement")
+
+    for suggestion in suggestions:
+        st.write("• " + suggestion)
+
+        # ====================================================
+        # AI / LANGCHAIN GUIDANCE
+        # ====================================================
+
+        st.subheader("🤖 AI / LangChain Guidance")
+
+        guidance = generate_guidance(
+            attendance,
+            study_hours,
+            assignment_score,
+            exam_score,
+            participation,
+            predicted_score,
+            performance_level
         )
+
+        st.write(guidance)
