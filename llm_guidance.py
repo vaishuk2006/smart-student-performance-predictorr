@@ -12,6 +12,8 @@ def generate_guidance(
     predicted_score,
     performance_level
 ):
+
+    api_key = st.secrets["GOOGLE_API_KEY"]
     """
     Generate personalized academic guidance using
     LangChain + Google Gemini.
