@@ -1,6 +1,4 @@
-import os
 import streamlit as st
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -17,28 +15,21 @@ def generate_guidance(
     """
     Generate personalized academic guidance using
     LangChain + Google Gemini.
-
-    Fuzzy Logic -> predicts performance
-    Gemini -> explains the prediction and gives guidance
     """
 
     # ========================================================
-    # GET API KEY
+    # GET API KEY FROM STREAMLIT SECRETS
     # ========================================================
 
-    api_key = os.getenv("GOOGLE_API_KEY")
-
-    if not api_key:
-        try:
-            api_key = st.secrets["GOOGLE_API_KEY"]
-        except Exception:
-            api_key = None
+    try:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+    except Exception:
+        api_key = None
 
     if not api_key:
         return (
-            "⚠️ Gemini API key is not configured. "
-            "Please add GOOGLE_API_KEY to your environment "
-            "variables or Streamlit secrets."
+            "Gemini API key is not configured. "
+            "Please add GOOGLE_API_KEY to Streamlit secrets."
         )
 
     # ========================================================
@@ -46,7 +37,6 @@ def generate_guidance(
     # ========================================================
 
     try:
-
         llm = ChatGoogleGenerativeAI(
             model="gemini-3.8-flash",
             google_api_key=api_key,
@@ -67,7 +57,7 @@ def generate_guidance(
 You are an AI academic performance assistant.
 
 A student's performance has already been predicted
-using a Fuzzy Logic AI/ML system.
+using a Fuzzy Logic system.
 
 Analyze the student's provided academic information
 and the predicted performance.
@@ -119,7 +109,7 @@ these values.
         chain = prompt | llm
 
         # ====================================================
-        # SEND STUDENT DATA TO GEMINI
+        # SEND DATA TO GEMINI
         # ====================================================
 
         response = chain.invoke(
@@ -135,27 +125,21 @@ these values.
         )
 
         # ====================================================
-        # GET RESPONSE TEXT
+        # RETURN RESPONSE
         # ====================================================
 
         if hasattr(response, "content"):
-
             content = response.content
 
             if isinstance(content, str):
                 return content
 
             if isinstance(content, list):
-
                 text_parts = []
 
                 for item in content:
-
-                    if isinstance(item, dict):
-
-                        if "text" in item:
-                            text_parts.append(item["text"])
-
+                    if isinstance(item, dict) and "text" in item:
+                        text_parts.append(item["text"])
                     elif isinstance(item, str):
                         text_parts.append(item)
 
@@ -165,16 +149,11 @@ these values.
         return str(response)
 
     # ========================================================
-    # SHOW ACTUAL ERROR
+    # GEMINI ERROR
     # ========================================================
 
     except Exception as e:
-
-        st.error(
-            f"Gemini/LangChain error: {str(e)}"
-        )
-
         return (
-            "The Fuzzy Logic prediction was completed, "
-            "but Gemini could not generate the AI guidance."
+            "Gemini could not generate AI guidance right now. "
+            "The Fuzzy Logic prediction was completed successfully."
         )
