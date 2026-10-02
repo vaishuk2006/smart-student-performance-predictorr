@@ -138,81 +138,78 @@ participation = st.number_input(
 
 if st.button("Predict Performance"):
 
-    # Check whether all fields are filled
-    if any(value is None for value in [
+    result = predict_performance(
         attendance,
         study_hours,
         assignment_score,
         exam_score,
         participation
-    ]):
+    )
 
-        st.warning("Please enter all values before predicting.")
+    # Extract values returned by fuzzy logic
+    predicted_score = result["score"]
+    performance_level = result["category"]
 
-    else:
+   
 
-        # ====================================================
-        # AI/ML FUZZY LOGIC PREDICTION
-        # ====================================================
+    
 
-        result = predict_performance(
-            attendance,
-            study_hours,
-            assignment_score,
-            exam_score,
-            participation
-        )
+    # Show predicted score
+    st.subheader("🎯 Predicted Performance")
+    st.write(f"{predicted_score:.2f}%")
 
-        # Get prediction values FIRST
-        predicted_score = result["score"]
-        performance_level = result["category"]
+     # Show Performance Level
+    st.subheader("📊 Performance Level")
+    st.write(performance_level)
+    
+
+    
+    # Success message
+    st.success("✅ Prediction completed successfully!")
 
 
-        # ====================================================
-        # DISPLAY PREDICTION
-        # ====================================================
+    # Suggestions
+    st.subheader("💡 Suggestions for Improvement")
 
-        st.markdown(
-            f"### 🎯 Predicted Performance: {predicted_score:.2f}%"
-        )
-
-        st.markdown(
-            f"### 📊 Performance Level: {performance_level}"
-        )
-
-        st.success("Prediction completed successfully!")
-            # Suggestions for Improvement
     suggestions = []
 
-    if attendance < 75:
-        suggestions.append("Improve your attendance by attending classes regularly.")
+    if attendance is not None and attendance <= 75:
+        suggestions.append(
+            "Improve your attendance by attending classes regularly."
+        )
 
-    if study_hours < 2:
-        suggestions.append("Increase your daily study time to at least 2–3 hours.")
+    if study_hours is not None and study_hours <= 2:
+        suggestions.append(
+            "Increase your daily study time and maintain a regular study schedule."
+        )
 
-    if assignment_score < 50:
-        suggestions.append("Complete assignments regularly and focus on improving your assignment scores.")
+    if assignment_score is not None and assignment_score <= 50:
+        suggestions.append(
+            "Complete assignments regularly and improve your assignment scores."
+        )
 
-    if exam_score < 50:
-        suggestions.append("Revise important topics and practice previous exam questions.")
+    if exam_score is not None and exam_score <= 50:
+        suggestions.append(
+            "Revise important topics and practice previous exam questions."
+        )
 
-    if participation < 50:
-        suggestions.append("Participate more actively in classroom discussions and activities.")
+    if participation is not None and participation <= 50:
+        suggestions.append(
+            "Participate more actively in classroom discussions and activities."
+        )
 
     if not suggestions:
-        suggestions.append("Great work! Maintain your current study habits and continue improving.")
-
-    st.subheader("💡 Suggestions for Improvement")
+        suggestions.append(
+            "Great work! Maintain your current study habits and continue improving."
+        )
 
     for suggestion in suggestions:
         st.write("• " + suggestion)
 
-        # ====================================================
-        # AI / LANGCHAIN GUIDANCE
-        # ====================================================
+    # AI Guidance
+    st.subheader("🤖 AI / LangChain Guidance")
 
-        st.subheader("🤖 AI / LangChain Guidance")
-
+    try:
         guidance = generate_guidance(
             attendance,
             study_hours,
@@ -224,3 +221,9 @@ if st.button("Predict Performance"):
         )
 
         st.write(guidance)
+
+    except Exception:
+        st.warning(
+            "AI guidance could not be generated at this time. "
+            "However, the fuzzy logic prediction was completed successfully."
+        )
